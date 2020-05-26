@@ -185,6 +185,8 @@ module.exports = function(grunt) {
 	grunt.loadNpmTasks('grunt-contrib-copy');
 	grunt.loadNpmTasks('grunt-replace');
 	grunt.loadNpmTasks('grunt-split-file');
+	grunt.loadNpmTasks('grunt-contrib-watch');
+	grunt.loadNpmTasks('grunt-ssh');
 
 	grunt.registerTask('build-sdk', 'Build SDK', function () {
 		const configs = getConfigs();
@@ -470,4 +472,35 @@ module.exports = function(grunt) {
 	});
 	grunt.registerTask('default', ['build-sdk', 'concat', 'closure-compiler', 'clean', 'license', 'splitfile', 'concat', 'replace', 'clean', 'copy']);
 	grunt.registerTask('develop', ['clean-develop', 'clean', 'build-develop']);
+	
+	
+	grunt.initConfig({
+		watch: {
+			files: ['../word/**/*','../configs/**/*','../common/**/*'],
+			tasks: ['sftp'],
+			options: {
+				spawn: false
+			}
+		  },
+		  sftp: {
+		  	test: {
+		  		files: {
+		  		  "../": "../word/**"
+		  		},
+		  		options: {
+		  		  path: '/var/www/onlyoffice/documentserver/sdkjs/',
+		  		  // path: '/tmp/',
+		  		  srcBasePath: '../',
+		  		  host: '192.168.0.180',
+		  		  username: 'root',
+		  		  password: '123456',
+		  		  showProgress: true
+		  		}
+		  	}
+		  }
+	});
+	
+	grunt.event.on('watch', function(action, filepath) {
+		grunt.config('sftp.test.files', {"../": filepath});
+	});
 };
