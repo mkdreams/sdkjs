@@ -2357,7 +2357,6 @@ CGraphics.prototype =
     {
         var ctx = this.m_oContext;
         ctx.beginPath();
-
         if (this.m_bIntegerGrid)
         {
             if (AscCommon.global_MatrixTransformer.IsIdentity2(this.m_oFullTransform))
@@ -2392,7 +2391,23 @@ CGraphics.prototype =
             ctx.rect(x, y, w, h);
         }
     },
-
+	
+	trangle : function(x,y,w,h,isRight)
+	{
+	    var ctx = this.m_oContext;
+	    ctx.beginPath();
+		if(isRight) {
+			ctx.moveTo(this.m_oFullTransform.TransformPointX(x, y),this.m_oFullTransform.TransformPointY(x, y));
+			ctx.lineTo(this.m_oFullTransform.TransformPointX(x+w, y+h/2),this.m_oFullTransform.TransformPointY(x+w, y+h/2));
+			ctx.lineTo(this.m_oFullTransform.TransformPointX(x, y+h),this.m_oFullTransform.TransformPointY(x, y+h));
+		}else{
+			ctx.moveTo(this.m_oFullTransform.TransformPointX(x, y),this.m_oFullTransform.TransformPointY(x, y));
+			ctx.lineTo(this.m_oFullTransform.TransformPointX(x-w, y+h/2),this.m_oFullTransform.TransformPointY(x-w, y+h/2));
+			ctx.lineTo(this.m_oFullTransform.TransformPointX(x, y+h),this.m_oFullTransform.TransformPointY(x, y+h));
+		}
+		ctx.closePath();
+	},
+	
     TableRect : function(x,y,w,h)
     {
         var ctx = this.m_oContext;

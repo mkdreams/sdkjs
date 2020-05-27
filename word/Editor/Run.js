@@ -5286,6 +5286,7 @@ ParaRun.prototype.Shift_Range = function(Dx, Dy, _CurLine, _CurRange)
 //-----------------------------------------------------------------------------------
 ParaRun.prototype.Draw_HighLights = function(PDSH)
 {
+	console.log('Draw_HighLights');
     var pGraphics = PDSH.Graphics;
 
     var CurLine   = PDSH.Line - this.StartLine;

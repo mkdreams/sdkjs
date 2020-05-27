@@ -1,4 +1,4 @@
-﻿/*
+/*
  * (c) Copyright Ascensio System SIA 2010-2019
  *
  * This program is a free software product. You can redistribute it and/or
@@ -6246,6 +6246,28 @@ background-repeat: no-repeat;\
 
 			this.sync_ChangeCommentData(Id, CommentData);
 		}
+	};
+	
+	asc_docs_api.prototype.asc_changeCommentToLeft = function(Id, AscCommentData)
+	{
+	};
+	
+	asc_docs_api.prototype.asc_changeCommentToRight = function(Id, AscCommentData)
+	{
+		var oLogicDocument = this.WordControl.m_oLogicDocument;
+		if (!oLogicDocument)
+			return;
+		
+		if (false === oLogicDocument.Document_Is_SelectionLocked(changestype_None, {
+				Type : AscCommon.changestype_2_Comment,
+				Id   : Id
+			}, false, oLogicDocument.IsEditCommentsMode()))
+		{
+			oLogicDocument.StartAction(AscDFH.historydescription_Document_RemoveComment);
+			oLogicDocument.RemoveComment(Id, true, true);
+			oLogicDocument.FinalizeAction();
+		}
+		
 	};
 
 	asc_docs_api.prototype.asc_selectComment = function(Id)

@@ -2177,13 +2177,26 @@ Paragraph.prototype.Internal_Draw_3 = function(CurPage, pGraphics, Pr)
 			{
 				if (!pGraphics.DrawTextArtComment)
 				{
-					if (Element.Additional.Active === true)
+					if (Element.Additional.Active === true) {
+						console.log(Element);
 						pGraphics.b_color1(240, 200, 120, 255);
-					else
+						pGraphics.rect(Element.x0, Element.y0, Element.x1 - Element.x0, Element.y1 - Element.y0);
+						pGraphics.df();
+						
+						pGraphics.b_color1(255, 0, 0, 150);
+						pGraphics.trangle(Element.x1, Element.y1, Element.y1 - Element.y0, Element.y1 - Element.y0, true);
+						pGraphics.df();
+						
+						pGraphics.b_color1(255, 0, 0, 150);
+						pGraphics.trangle(Element.x0, Element.y1, Element.y1 - Element.y0, Element.y1 - Element.y0, false);
+						pGraphics.df();
+					}
+					else {
 						pGraphics.b_color1(248, 231, 195, 255);
+						pGraphics.rect(Element.x0, Element.y0, Element.x1 - Element.x0, Element.y1 - Element.y0);
+						pGraphics.df();
+					}
 
-					pGraphics.rect(Element.x0, Element.y0, Element.x1 - Element.x0, Element.y1 - Element.y0);
-					pGraphics.df();
 
 					DocumentComments.Add_DrawingRect(Element.x0, Element.y0, Element.x1 - Element.x0, Element.y1 - Element.y0, Page_abs, Element.Additional.CommentId, ParentInvertTransform);
 				}
