@@ -12063,6 +12063,21 @@ CDocument.prototype.RemoveComment = function(Id, bSendEvent, bRecalculate)
 			this.Api.sync_RemoveComment(Id);
 	}
 };
+CDocument.prototype.RemoveCommentLeft = function(Id, bSendEvent, bRecalculate)
+{
+	if (null === Id)
+		return;
+	//delet left
+	this.Comments.Remove_ById(Id, 1);
+	
+};
+CDocument.prototype.RemoveCommentRight = function(Id, bSendEvent, bRecalculate)
+{
+	if (null === Id)
+		return;
+	//delete right
+	this.Comments.Remove_ById(Id, 2);
+};
 CDocument.prototype.CanAddComment = function()
 {
 	if (!this.CanEdit() && !this.IsEditCommentsMode())
