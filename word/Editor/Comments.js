@@ -372,22 +372,22 @@ function CComment(Parent, Data)
 		this.Data = Data;
 	};
 
-    this.Remove_Marks = function(Type)
+    this.Remove_Marks = function()
     {
         var ObjStart = g_oTableId.Get_ById(this.StartId);
         var ObjEnd   = g_oTableId.Get_ById(this.EndId);
 
         if ( ObjStart === ObjEnd )
         {
-            if ( null != ObjStart )
+            if ( null != ObjStart)
                 ObjStart.RemoveCommentMarks( this.Id );
         }
         else
         {
-            if ( null != ObjStart && (0 === Type || 1 === Type) )
+            if ( null != ObjStart)
                 ObjStart.RemoveCommentMarks( this.Id );
 
-            if ( null != ObjEnd && (0 === Type || 2 === Type) )
+            if ( null != ObjEnd)
                 ObjEnd.RemoveCommentMarks( this.Id );
         }
     };
@@ -613,23 +613,17 @@ function CComments()
         return null;
     };
 
-    this.Remove_ById = function(Id,Type)
+    this.Remove_ById = function(Id)
     {
-		if ( undefined === Type) {
-			Type = 0;//0-default，1-left delete,2-right delete
-		}
-		
         if ( "undefined" != typeof(this.m_aComments[Id]) )
         {
-			if(Type === 0) {
-				History.Add(new CChangesCommentsRemove(this, Id, this.m_aComments[Id]));
-
-				// Сначала удаляем комментарий из списка комментариев, чтобы данная функция не зацикливалась на вызове Remove_Marks
-				var Comment = this.m_aComments[Id];
-				delete this.m_aComments[Id];
-			}
+			History.Add(new CChangesCommentsRemove(this, Id, this.m_aComments[Id]));
+			// Сначала удаляем комментарий из списка комментариев, чтобы данная функция не зацикливалась на вызове Remove_Marks
+			var Comment = this.m_aComments[Id];
 			
-            Comment.Remove_Marks(Type);
+			delete this.m_aComments[Id];
+			
+            Comment.Remove_Marks();
             return true;
         }
 

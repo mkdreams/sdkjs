@@ -12018,6 +12018,7 @@ CDocument.prototype.AddComment = function(CommentData, isForceGlobal)
 		CommentData.Set_QuoteText(QuotedText);
 
 		var Comment = new AscCommon.CComment(this.Comments, CommentData);
+		//add to comments array
 		this.Comments.Add(Comment);
 		this.Controller.AddComment(Comment);
 
@@ -12063,20 +12064,76 @@ CDocument.prototype.RemoveComment = function(Id, bSendEvent, bRecalculate)
 			this.Api.sync_RemoveComment(Id);
 	}
 };
-CDocument.prototype.RemoveCommentLeft = function(Id, bSendEvent, bRecalculate)
+CDocument.prototype.EditCommentLeft = function(Id,CommentData, isForceGlobal)
 {
 	if (null === Id)
 		return;
-	//delet left
-	this.Comments.Remove_ById(Id, 1);
+	var Comment = this.Comments.Get_ById(Id);
+	var CommentCopy = Comment.Copy();
 	
+	//delet left
+	var ObjStart = g_oTableId.Get_ById(Comment.StartId);
+	var startPos = ObjStart.GetCommentPos(Id,false);
+	
+	var ObjEnd = g_oTableId.Get_ById(Comment.EndId);
+	var endPos = ObjEnd.GetCommentPos(Id,true);
+	console.log('ObjStart',Comment,startPos,endPos,this.CurPos.ContentPos);
+	// return ;
+	this.Comments.Remove_ById(Id);
+	this.Api.sync_RemoveComment(Id);
+	this.Recalculate();
+	this.Document_UpdateInterfaceState();
+	
+	this.Comments.Add(CommentCopy);
+	console.log('ObjStart',Comment,startPos,endPos,this.CurPos.ContentPos);
+	this.Content[this.CurPos.ContentPos].AddComment(CommentCopy, true, false);
+	// this.Content[startPos].AddComment(CommentCopy, true, false);
+	
+	// if(this.Content[endPos]) {
+	// 	if(startPos !== endPos) {
+	// 		this.Content[endPos-1].AddComment(CommentCopy, false, true);
+	// 	}else{
+			this.Content[this.CurPos.ContentPos+1].AddComment(CommentCopy, true, false);
+	// 	}
+	// }
+	
+	
+	/*
+	if (selectionflag_Numbering === this.Selection.Flag)
+		return;
+		
+	
+	if (true === this.Selection.Use)
+	{	
+		var StartPos, EndPos;
+		if (this.Selection.StartPos < this.Selection.EndPos)
+		{
+			StartPos = this.Selection.StartPos;
+			EndPos   = this.Selection.EndPos;
+		}
+		else
+		{
+			StartPos = this.Selection.EndPos;
+			EndPos   = this.Selection.StartPos;
+		}
+		
+		this.Comments.Add(Comment);
+		this.Controller.AddComment(Comment);
+		
+		// TODO: Продумать, как избавиться от пересчета
+		this.Recalculate();
+		this.Document_UpdateInterfaceState();
+	
+		// this.Content[StartPos].AddComment(Comment, true, false);
+	}
+	*/
 };
-CDocument.prototype.RemoveCommentRight = function(Id, bSendEvent, bRecalculate)
+CDocument.prototype.EditCommentRight = function(Id, CommentData)
 {
 	if (null === Id)
 		return;
 	//delete right
-	this.Comments.Remove_ById(Id, 2);
+	this.Comments.Remove_ById(Id);
 };
 CDocument.prototype.CanAddComment = function()
 {

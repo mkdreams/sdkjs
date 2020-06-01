@@ -6250,6 +6250,20 @@ background-repeat: no-repeat;\
 	
 	asc_docs_api.prototype.asc_changeCommentToLeft = function(Id, AscCommentData)
 	{
+		var oLogicDocument = this.WordControl.m_oLogicDocument;
+		if (!oLogicDocument)
+			return;
+		
+		if (false === oLogicDocument.Document_Is_SelectionLocked(changestype_None, {
+				Type : AscCommon.changestype_2_Comment,
+				Id   : Id
+			}, false, oLogicDocument.IsEditCommentsMode()))
+		{
+			oLogicDocument.StartAction(AscDFH.historydescription_Document_ChangeComment);
+			console.log('asc_changeCommentToLeft',Id);
+			oLogicDocument.EditCommentLeft(Id);
+			oLogicDocument.FinalizeAction();
+		}
 	};
 	
 	asc_docs_api.prototype.asc_changeCommentToRight = function(Id, AscCommentData)
@@ -6263,11 +6277,15 @@ background-repeat: no-repeat;\
 				Id   : Id
 			}, false, oLogicDocument.IsEditCommentsMode()))
 		{
-			oLogicDocument.StartAction(AscDFH.historydescription_Document_RemoveComment);
-			oLogicDocument.RemoveComment(Id, true, true);
-			oLogicDocument.FinalizeAction();
-		}
+			var CommentData = new AscCommon.CCommentData();
+			CommentData.Read_FromAscCommentData(AscCommentData);
 		
+			oLogicDocument.StartAction(AscDFH.historydescription_Document_ChangeComment);
+			oLogicDocument.EditCommentRight(Id, CommentData);
+			oLogicDocument.FinalizeAction();
+		
+			this.sync_ChangeCommentData(Id, CommentData);
+		}
 	};
 
 	asc_docs_api.prototype.asc_selectComment = function(Id)
@@ -10499,6 +10517,8 @@ background-repeat: no-repeat;\
 	asc_docs_api.prototype['asc_showComments']                          = asc_docs_api.prototype.asc_showComments;
 	asc_docs_api.prototype['asc_hideComments']                          = asc_docs_api.prototype.asc_hideComments;
 	asc_docs_api.prototype['asc_addComment']                            = asc_docs_api.prototype.asc_addComment;
+	asc_docs_api.prototype['asc_changeCommentToLeft']                            = asc_docs_api.prototype.asc_changeCommentToLeft;
+	asc_docs_api.prototype['asc_changeCommentToRight']                            = asc_docs_api.prototype.asc_changeCommentToRight;
 	asc_docs_api.prototype['asc_removeComment']                         = asc_docs_api.prototype.asc_removeComment;
 	asc_docs_api.prototype['asc_changeComment']                         = asc_docs_api.prototype.asc_changeComment;
 	asc_docs_api.prototype['asc_selectComment']                         = asc_docs_api.prototype.asc_selectComment;

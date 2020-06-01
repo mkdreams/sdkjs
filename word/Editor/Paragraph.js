@@ -12312,6 +12312,25 @@ Paragraph.prototype.RemoveCommentMarks = function(Id)
 		}
 	}
 };
+Paragraph.prototype.GetCommentPos = function(Id,last)
+{
+	var Count = this.Content.length;
+	var rPos = null;
+	console.log('Content',this.Content);
+	for (var Pos = 0; Pos < Count; Pos++)
+	{
+		var Item = this.Content[Pos];
+		if (para_Comment === Item.Type && Id === Item.CommentId)
+		{
+			rPos = Pos;
+			if(!last) {
+				break;
+			}
+		}
+	}
+	
+	return rPos-1;
+};
 Paragraph.prototype.ReplaceMisspelledWord = function(Word, oElement)
 {
 	var Element = null;
