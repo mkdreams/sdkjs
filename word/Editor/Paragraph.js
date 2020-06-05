@@ -12316,20 +12316,22 @@ Paragraph.prototype.GetCommentPos = function(Id,last)
 {
 	var Count = this.Content.length;
 	var rPos = null;
-	console.log('Content',this.Content);
+	
+	var count = 0;
 	for (var Pos = 0; Pos < Count; Pos++)
 	{
 		var Item = this.Content[Pos];
 		if (para_Comment === Item.Type && Id === Item.CommentId)
 		{
 			rPos = Pos;
+			count++;
 			if(!last) {
 				break;
 			}
 		}
 	}
 	
-	return rPos-1;
+	return rPos - count;
 };
 Paragraph.prototype.ReplaceMisspelledWord = function(Word, oElement)
 {

@@ -12021,7 +12021,7 @@ CDocument.prototype.AddComment = function(CommentData, isForceGlobal)
 		//add to comments array
 		this.Comments.Add(Comment);
 		this.Controller.AddComment(Comment);
-
+		
 		// TODO: Продумать, как избавиться от пересчета
 		this.Recalculate();
 		this.Document_UpdateInterfaceState();
@@ -12069,33 +12069,141 @@ CDocument.prototype.EditCommentLeft = function(Id,CommentData, isForceGlobal)
 	if (null === Id)
 		return;
 	var Comment = this.Comments.Get_ById(Id);
-	var CommentCopy = Comment.Copy();
+	// var CommentCopy = Comment.Copy();
+	var CommentData =  Comment.Data;
+	// console.log('CommentCopy',CommentCopy);
+	// this.RemoveComment(Id,true,true);
+	// var CommentCopyEnd = Comment.Copy();
+	//start pos
+	var curContentPos = this.Content[this.CurPos.ContentPos].Get_ParaContentPos(false, false);
+	var StartContentPos = this.CurPos.ContentPos;
+	var StartPos = curContentPos.Get(0);
 	
-	//delet left
-	var ObjStart = g_oTableId.Get_ById(Comment.StartId);
-	var startPos = ObjStart.GetCommentPos(Id,false);
+	//start pos
+	// var ObjStart = g_oTableId.Get_ById(Comment.StartId);
+	// var StartContentPos = ObjStart.Index;
+	// var StartPos = ObjStart.GetCommentPos(Id,false) - 1;
 	
+	//right pos
 	var ObjEnd = g_oTableId.Get_ById(Comment.EndId);
-	var endPos = ObjEnd.GetCommentPos(Id,true);
-	console.log('ObjStart',Comment,startPos,endPos,this.CurPos.ContentPos);
-	// return ;
-	this.Comments.Remove_ById(Id);
-	this.Api.sync_RemoveComment(Id);
+	var EndContentPos = ObjEnd.Index;
+	var EndPos = ObjEnd.GetCommentPos(Id,true);
+	
+	if(StartContentPos > EndContentPos) {
+		return ;
+	}
+	
+	this.RemoveComment(Id,true,true);
+	
+	//select range action
+	this.RemoveSelection();
+	
+	var oStartPos = new CParagraphContentPos();
+	var oEndPos   = new CParagraphContentPos();
+	oStartPos.Update(StartPos, 0);
+	oEndPos.Update(EndPos, 0);
+	
+	console.log(StartContentPos,EndContentPos);
+	
+	if(StartContentPos === EndContentPos) {
+		var startParagraph = this.Content[StartContentPos];
+		console.log('startParagraph',startParagraph);
+		startParagraph.Selection.Use      = true;
+		startParagraph.Selection.Start    = false;
+		startParagraph.Set_SelectionContentPos(oStartPos, oEndPos);
+		startParagraph.Set_ParaContentPos(oStartPos, false, -1, -1);
+		startParagraph.Document_SetThisElementCurrent(true);
+	}else{
+		var startParagraph = this.Content[StartContentPos];
+		console.log('startParagraph',startParagraph);
+		startParagraph.Selection.Use      = true;
+		startParagraph.Selection.Start    = false;
+		var oPosTemp   = new CParagraphContentPos();
+		oPosTemp.Update(startParagraph.Content.length-1, 0);
+		startParagraph.Set_SelectionContentPos(oStartPos, oPosTemp);
+		startParagraph.Set_ParaContentPos(oStartPos, false, -1, -1);
+		// startParagraph.Document_SetThisElementCurrent(true);
+		
+		var EndParagraph = this.Content[EndContentPos];
+		console.log('EndParagraph',EndParagraph);
+		EndParagraph.Selection.Use      = true;
+		EndParagraph.Selection.Start    = false;
+		var oPosTemp   = new CParagraphContentPos();
+		oPosTemp.Update(0, 0);
+		EndParagraph.Set_SelectionContentPos(oPosTemp, oEndPos);
+		EndParagraph.Set_ParaContentPos(oStartPos, false, -1, -1);
+		EndParagraph.Document_SetThisElementCurrent(true);
+	}
+	
+	this.RecalculateCurPos();
+	this.Document_UpdateInterfaceState();
+	this.Document_UpdateSelectionState();
+	this.Document_UpdateRulersState();
+	
+	var CommentCopy = this.AddComment(CommentData);
+	
+	//web app sync
+	this.Api.sync_AddComment(CommentCopy.Get_Id(), CommentData);
+	
 	this.Recalculate();
 	this.Document_UpdateInterfaceState();
+	// return CommentCopy;
 	
-	this.Comments.Add(CommentCopy);
-	console.log('ObjStart',Comment,startPos,endPos,this.CurPos.ContentPos);
-	this.Content[this.CurPos.ContentPos].AddComment(CommentCopy, true, false);
-	// this.Content[startPos].AddComment(CommentCopy, true, false);
-	
-	// if(this.Content[endPos]) {
-	// 	if(startPos !== endPos) {
-	// 		this.Content[endPos-1].AddComment(CommentCopy, false, true);
-	// 	}else{
-			this.Content[this.CurPos.ContentPos+1].AddComment(CommentCopy, true, false);
-	// 	}
+	// if (this.CurPos.ContentPos >= EndPos)
+	// {
+	// 	EndPos = this.CurPos.ContentPos;
 	// }
+	// else
+	// {
+	// 	StartPos = this.CurPos.ContentPos;
+	// }
+	// OldStartPos = this.Selection.EndPos;
+	// OldEndPos   = this.Selection.StartPos;
+	
+	// console.log('pos',StartPos,EndPos,this.Selection.StartPos,this.Selection.EndPos,this.CurPos.ContentPos);
+	// console.log('length',this.Content.length);
+	// if (StartPos === EndPos)
+	// {
+	// 	this.Comments.Add(CommentCopy);
+		
+	// 	this.Content[this.CurPos.ContentPos].Selection.Use = true;
+	// 	this.Content[this.CurPos.ContentPos].Selection.Start = true;
+	// 	this.Content[this.CurPos.ContentPos].Selection.Set_StartPos(StartPos,EndPos);
+	// 	this.Content[this.CurPos.ContentPos].Selection.Use = true;
+	// 	this.Content[this.CurPos.ContentPos].Selection.Set_StartPos(StartPos,EndPos);
+	// 	this.Content[this.CurPos.ContentPos].Selection.Set_EndPos(StartPos,EndPos);
+	// 	if(this.CurPos.ContentPos === EndContentPos) {
+	// 		this.Content[this.CurPos.ContentPos].AddComment(CommentCopy, true, true);
+	// 	}else{
+	// 		this.Content[this.CurPos.ContentPos].AddComment(CommentCopy, true, false);
+	// 		this.Content[EndContentPos].Selection.Use = true;
+	// 		this.Content[EndContentPos].Selection.Set_StartPos(0,EndPos);
+	// 		this.Content[EndContentPos].Selection.Set_EndPos(0,EndPos);
+	// 		this.Content[EndContentPos].AddComment(CommentCopy, false, true);
+	// 	}
+		
+	// this.Recalculate();
+	// this.Document_UpdateInterfaceState();
+		// this.Content[EndContentPos].Selection.Use = true;
+		// this.Content[this.CurPos.ContentPos].Selection.Start = false;
+		// this.Content[EndContentPos].Selection.Set_EndPos(StartPos,EndPos);
+		// this.Content[EndContentPos].AddComment(CommentCopy, false, true);
+	// }
+	// else
+	// {
+	// 	// this.Comments.Add(CommentCopyEnd);
+	// 	this.Content[StartPos].AddComment(CommentCopyStart, true, false);
+	// 	this.Content[EndPos].AddComment(CommentCopyStart, false, true);
+	// }
+	
+	// this.Comments.Add(CommentCopy);
+	// this.Controller.AddComment(CommentCopy);
+	
+	// this.Recalculate();
+	// this.Document_UpdateInterfaceState();
+	
+	// return CommentCopy;
+	
 	
 	
 	/*
