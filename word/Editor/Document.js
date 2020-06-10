@@ -12086,70 +12086,70 @@ CDocument.prototype.EditCommentLeft = function(Id,CommentData, isForceGlobal)
 	// this.RemoveComment(Id,true,true);
 	// var CommentCopyEnd = Comment.Copy();
 	//start pos
-	var curContentPos = this.Content[this.CurPos.ContentPos].Get_ParaContentPos(false, false);
-	var StartContentPos = this.CurPos.ContentPos;
-	var StartPos = curContentPos.Get(0);
-	
-	//start pos
-	// var ObjStart = g_oTableId.Get_ById(Comment.StartId);
-	// var StartContentPos = ObjStart.Index;
-	// var StartPos = ObjStart.GetCommentPos(Id,false) - 1;
+	// var curContentPos = this.Content[this.CurPos.ContentPos].Get_ParaContentPos(false, false);
+	// var StartContentPos = this.CurPos.ContentPos;
+	// var StartPos = curContentPos.Get(0);
 	
 	//right pos
-	var ObjEnd = g_oTableId.Get_ById(Comment.EndId);
-	var EndContentPos = ObjEnd.Index;
-	var EndPos = ObjEnd.GetCommentPos(Id,true);
+	// var ObjEnd = g_oTableId.Get_ById(Comment.EndId);
+	// var EndContentPos = ObjEnd.Index;
+	// var EndPos = ObjEnd.GetCommentPos(Id,true);
 	
-	if(StartContentPos > EndContentPos) {
-		return ;
-	}
+	// console.log('CurPos',this.CurPos);
+	// console.log('ObjEnd',ObjEnd);
+	
+	// if(StartContentPos > EndContentPos) {
+	// 	return ;
+	// }
 	
 	this.RemoveComment(Id,true,true);
 	
 	//select range action
-	this.RemoveSelection();
+	// this.RemoveSelection();
 	
-	var oStartPos = new CParagraphContentPos();
-	var oEndPos   = new CParagraphContentPos();
-	oStartPos.Update(StartPos, 0);
-	oEndPos.Update(EndPos, 0);
+	// var oStartPos = new CParagraphContentPos();
+	// var oEndPos   = new CParagraphContentPos();
+	// oStartPos.Update(StartPos, 0);
+	// oEndPos.Update(EndPos, 0);
 	
-	console.log(StartContentPos,EndContentPos);
+	// console.log(StartContentPos,EndContentPos);
 	
-	if(StartContentPos === EndContentPos) {
-		var startParagraph = this.Content[StartContentPos];
-		console.log('startParagraph',startParagraph);
-		startParagraph.Selection.Use      = true;
-		startParagraph.Selection.Start    = false;
-		startParagraph.Set_SelectionContentPos(oStartPos, oEndPos);
-		startParagraph.Set_ParaContentPos(oStartPos, false, -1, -1);
-		startParagraph.Document_SetThisElementCurrent(true);
-	}else{
-		var startParagraph = this.Content[StartContentPos];
-		console.log('startParagraph',startParagraph);
-		startParagraph.Selection.Use      = true;
-		startParagraph.Selection.Start    = false;
-		var oPosTemp   = new CParagraphContentPos();
-		oPosTemp.Update(startParagraph.Content.length-1, 0);
-		startParagraph.Set_SelectionContentPos(oStartPos, oPosTemp);
-		startParagraph.Set_ParaContentPos(oStartPos, false, -1, -1);
-		// startParagraph.Document_SetThisElementCurrent(true);
+	// if(StartContentPos === EndContentPos) {
+	// 	var startParagraph = this.Content[StartContentPos];
+	// 	console.log('startParagraph',startParagraph);
+	// 	startParagraph.Selection.Use      = true;
+	// 	startParagraph.Selection.Start    = false;
+	// 	startParagraph.Set_SelectionContentPos(oStartPos, oEndPos);
+	// 	startParagraph.Set_ParaContentPos(oStartPos, false, -1, -1);
+	// 	startParagraph.Document_SetThisElementCurrent(true);
+	// }else{
+	// 	var startParagraph = this.Content[StartContentPos];
+	// 	console.log('startParagraph',startParagraph);
+	// 	startParagraph.Selection.Use      = true;
+	// 	startParagraph.Selection.Start    = false;
+	// 	var oPosTemp   = new CParagraphContentPos();
+	// 	oPosTemp.Update(startParagraph.Content.length-1, 0);
+	// 	startParagraph.Set_SelectionContentPos(oStartPos, oPosTemp);
+	// 	startParagraph.Set_ParaContentPos(oStartPos, false, -1, -1);
+	// 	// startParagraph.Document_SetThisElementCurrent(true);
 		
-		var EndParagraph = this.Content[EndContentPos];
-		console.log('EndParagraph',EndParagraph);
-		EndParagraph.Selection.Use      = true;
-		EndParagraph.Selection.Start    = false;
-		var oPosTemp   = new CParagraphContentPos();
-		oPosTemp.Update(0, 0);
-		EndParagraph.Set_SelectionContentPos(oPosTemp, oEndPos);
-		EndParagraph.Set_ParaContentPos(oStartPos, false, -1, -1);
-		EndParagraph.Document_SetThisElementCurrent(true);
-	}
+	// 	var EndParagraph = this.Content[EndContentPos];
+	// 	console.log('EndParagraph',EndParagraph);
+	// 	EndParagraph.Selection.Use      = true;
+	// 	EndParagraph.Selection.Start    = false;
+	// 	var oPosTemp   = new CParagraphContentPos();
+	// 	oPosTemp.Update(0, 0);
+	// 	EndParagraph.Set_SelectionContentPos(oPosTemp, oEndPos);
+	// 	EndParagraph.Set_ParaContentPos(oStartPos, false, -1, -1);
+	// 	EndParagraph.Document_SetThisElementCurrent(true);
+	// }
 	
-	this.RecalculateCurPos();
-	this.Document_UpdateInterfaceState();
-	this.Document_UpdateSelectionState();
-	this.Document_UpdateRulersState();
+	// this.RecalculateCurPos();
+	// this.Document_UpdateInterfaceState();
+	// this.Document_UpdateSelectionState();
+	// this.Document_UpdateRulersState();
+	
+	// return ;
 	
 	var CommentCopy = this.AddComment(CommentData);
 	
